@@ -86,15 +86,15 @@ jobs:
         run: docker stop json-rpc-relay json-rpc-relay-ws
 
        - name: Run acceptance tests
-        env:
-          TEST_WS_SERVER: ${{ inputs.test_ws_server }}
-          SUBSCRIPTIONS_ENABLED: ${{ inputs.test_ws_server }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PR_NUMBER: ${{ github.event.number }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          OPERATOR_KEY_MAIN: '302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137'
-        run: |
-          echo "Running acceptance tests..."
-          echo "Max attempts: ${{ inputs.maxAttempts }}"
-          echo "Test filter: ${{ inputs.testfilter }}"
-          npm run acceptancetest:${{ inputs.testfilter }}
+          env:
+            TEST_WS_SERVER: ${{ inputs.test_ws_server }}
+            SUBSCRIPTIONS_ENABLED: ${{ inputs.test_ws_server }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_PR_NUMBER: ${{ github.event.number }}
+            GITHUB_REPOSITORY: ${{ github.repository }}
+            OPERATOR_KEY_MAIN: '302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137'
+          run: |
+            echo "Running acceptance tests..."
+            echo "Max attempts: ${{ inputs.maxAttempts }}"
+            echo "Test filter: ${{ inputs.testfilter }}"
+            npm run acceptancetest:${{ inputs.testfilter }}
