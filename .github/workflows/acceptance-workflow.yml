@@ -86,7 +86,6 @@ jobs:
         run: docker stop json-rpc-relay json-rpc-relay-ws
 
       - name: Run acceptance tests
-        uses: step-security/retry@2ab886c0de89f68f146c9b43f53e61abc59c46dc # v3.0.1
         with:
           max_attempts: ${{ inputs.maxAttempts }}
           timeout_minutes: 30
