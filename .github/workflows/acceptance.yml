@@ -12,18 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  api_batch_1:
-    name: API Batch 1
-    uses: ./.github/workflows/acceptance-workflow.yml
-    with:
-      testfilter: api_batch1
-
-  api_batch_2:
-    name: API Batch 2
-    uses: ./.github/workflows/acceptance-workflow.yml
-    with:
-      testfilter: api_batch2
-
   api_batch_3:
     name: API Batch 3
     uses: ./.github/workflows/acceptance-workflow.yml
