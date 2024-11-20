@@ -694,7 +694,7 @@ export class SDKClient {
     const txConstructorName = transaction.constructor.name;
     let transactionId: string = '';
     let transactionResponse: TransactionResponse | null = null;
-
+    console.log('tuka sym3');
     if (shouldThrowHbarLimit) {
       const shouldLimit = await this.hbarLimitService.shouldLimit(
         constants.EXECUTION_MODE.TRANSACTION,
@@ -712,6 +712,7 @@ export class SDKClient {
 
     try {
       this.logger.info(`${requestDetails.formattedRequestId} Execute ${txConstructorName} transaction`);
+
       transactionResponse = await transaction.execute(this.clientMain);
 
       transactionId = transactionResponse.transactionId.toString();
@@ -803,6 +804,8 @@ export class SDKClient {
       }
     }
 
+    console.log('tuka sym2');
+
     try {
       this.logger.info(`${requestDetails.formattedRequestId} Execute ${txConstructorName} transaction`);
       transactionResponses = await transaction.executeAll(this.clientMain);
@@ -811,6 +814,7 @@ export class SDKClient {
         `${requestDetails.formattedRequestId} Successfully execute all ${transactionResponses.length} ${txConstructorName} transactions: callerName=${callerName}, status=${Status.Success}(${Status.Success._code})`,
       );
     } catch (e: any) {
+      console.log('a tuka?');
       const sdkClientError = new SDKClientError(e, e.message);
 
       this.logger.warn(

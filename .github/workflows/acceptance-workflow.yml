@@ -34,27 +34,18 @@ on:
       operator_key:
         description: 'The ED25519, ECDSA, or DER encoded private key of the operator'
         required: false
-
 env:
   OPERATOR_ID_MAIN: ${{ inputs.operator_id }}
-
 jobs:
   acceptance-workflow:
-    runs-on: smart-contracts-linux-large
+    runs-on: ubuntu-latest
     timeout-minutes: 50
     permissions:
       contents: read
       actions: read
       checks: write
       # issues: read
-    env:
-      OPERATOR_ID_MAIN: ${{ inputs.operator_id }}
     steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
-        with:
-          egress-policy: audit
-
       - name: Checkout Code
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
@@ -85,52 +76,22 @@ jobs:
         run: npm install @hashgraph/hedera-local -g
 
       - name: Run hedera local
-        run: npx hedera restart -d --verbose=trace --network-tag=${{ inputs.networkTag }} --mirror-tag=${{ inputs.mirrorTag }}
+        run: npx hedera restart -d --verbose=trace
 
       - name: Stop relay
         run: docker stop json-rpc-relay json-rpc-relay-ws
 
       - name: Run acceptance tests
-        uses: step-security/retry@2ab886c0de89f68f146c9b43f53e61abc59c46dc # v3.0.1
-        with:
-          max_attempts: ${{ inputs.maxAttempts }}
-          timeout_minutes: 30
-          command: npm run acceptancetest:${{ inputs.testfilter }}
         env:
-          TEST_WS_SERVER: ${{ inputs.test_ws_server }}
-          SUBSCRIPTIONS_ENABLED: ${{ inputs.test_ws_server }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          OPERATOR_KEY_MAIN: ${{ secrets.operator_key }}
-
-      - name: Upload Heap Snapshots
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
-        with:
-          name: Heap Snapshots
-          path: "**/*.heapsnapshot"
-          if-no-files-found: ignore
-
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
-        with:
-          name: Test Results (${{ inputs.testfilter }})
-          path: test-*.xml
-
-      - name: Upload coverage report
-        if: ${{ !cancelled() && always() }}
-        run: bash .github/scripts/codecov-upload.sh
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Publish Test Report
-        uses: step-security/publish-unit-test-result-action@4519d7c9f71dd765f8bbb98626268780f23bab28 # v2.17.0
-        if: ${{ !cancelled() }}
-        with:
-          check_name: '' # Set to empty to disable check run
-          comment_mode: off
-          json_thousands_separator: ','
-          files: 'test-*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          OPERATOR_KEY_MAIN: '0x7f109a9e3b0d8ecfba9cc23a3614433ce0fa7ddcc80f2a8f10b222179a5a80d6'
+        run: |
+          echo "Running acceptance tests..."
+          echo "Test filter: ${{ inputs.testfilter }}"
+          echo "Runner Name: $RUNNER_NAME"
+          echo "Runner ID: $RUNNER_ID"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner Architecture: $RUNNER_ARCH"
+          npm run acceptancetest:${{ inputs.testfilter }}
