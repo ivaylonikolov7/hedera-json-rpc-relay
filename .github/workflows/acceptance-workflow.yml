@@ -90,4 +90,8 @@ jobs:
         run: |
           echo "Running acceptance tests..."
           echo "Test filter: ${{ inputs.testfilter }}"
+          echo "Runner Name: $RUNNER_NAME"
+          echo "Runner ID: $RUNNER_ID"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner Architecture: $RUNNER_ARCH"
           npm run acceptancetest:${{ inputs.testfilter }}
